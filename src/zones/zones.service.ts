@@ -14,11 +14,9 @@ export class ZonesService {
     },
   ];
 
-  private nextId = 2;
-
   create(createZoneDto: CreateZoneDto) {
     const zone: Zone = {
-      id: this.nextId++,
+      id: this.getNextId(),
       ...createZoneDto,
     };
 
@@ -43,7 +41,7 @@ export class ZonesService {
   remove(id: number) {
     const index = this.zones.findIndex((zone) => zone.id === id);
     if (index === -1) {
-      throw new NotFoundException(`Zone ${id} not found`);
+      throw new NotFoundException('Zone not found');
     }
 
     return this.zones.splice(index, 1)[0];
@@ -52,9 +50,13 @@ export class ZonesService {
   private findById(id: number) {
     const zone = this.zones.find((item) => item.id === id);
     if (!zone) {
-      throw new NotFoundException(`Zone ${id} not found`);
+      throw new NotFoundException('Zone not found');
     }
 
     return zone;
+  }
+
+  private getNextId() {
+    return Math.max(...this.zones.map((zone) => zone.id), 0) + 1;
   }
 }

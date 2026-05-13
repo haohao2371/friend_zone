@@ -15,11 +15,9 @@ export class FriendsService {
     },
   ];
 
-  private nextId = 2;
-
   create(createFriendDto: CreateFriendDto) {
     const friend: Friend = {
-      id: this.nextId++,
+      id: this.getNextId(),
       ...createFriendDto,
     };
 
@@ -44,7 +42,7 @@ export class FriendsService {
   remove(id: number) {
     const index = this.friends.findIndex((friend) => friend.id === id);
     if (index === -1) {
-      throw new NotFoundException(`Friend ${id} not found`);
+      throw new NotFoundException('Friend not found');
     }
 
     return this.friends.splice(index, 1)[0];
@@ -53,9 +51,13 @@ export class FriendsService {
   private findById(id: number) {
     const friend = this.friends.find((item) => item.id === id);
     if (!friend) {
-      throw new NotFoundException(`Friend ${id} not found`);
+      throw new NotFoundException('Friend not found');
     }
 
     return friend;
+  }
+
+  private getNextId() {
+    return Math.max(...this.friends.map((friend) => friend.id), 0) + 1;
   }
 }

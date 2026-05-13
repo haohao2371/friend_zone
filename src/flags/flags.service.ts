@@ -14,11 +14,9 @@ export class FlagsService {
     },
   ];
 
-  private nextId = 2;
-
   create(createFlagDto: CreateFlagDto) {
     const flag: Flag = {
-      id: this.nextId++,
+      id: this.getNextId(),
       ...createFlagDto,
     };
 
@@ -43,7 +41,7 @@ export class FlagsService {
   remove(id: number) {
     const index = this.flags.findIndex((flag) => flag.id === id);
     if (index === -1) {
-      throw new NotFoundException(`Flag ${id} not found`);
+      throw new NotFoundException('Flag not found');
     }
 
     return this.flags.splice(index, 1)[0];
@@ -52,9 +50,13 @@ export class FlagsService {
   private findById(id: number) {
     const flag = this.flags.find((item) => item.id === id);
     if (!flag) {
-      throw new NotFoundException(`Flag ${id} not found`);
+      throw new NotFoundException('Flag not found');
     }
 
     return flag;
+  }
+
+  private getNextId() {
+    return Math.max(...this.flags.map((flag) => flag.id), 0) + 1;
   }
 }

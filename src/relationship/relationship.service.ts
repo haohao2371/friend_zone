@@ -15,11 +15,9 @@ export class RelationshipService {
     },
   ];
 
-  private nextId = 2;
-
   create(createRelationshipDto: CreateRelationshipDto) {
     const relationship: Relationship = {
-      id: this.nextId++,
+      id: this.getNextId(),
       ...createRelationshipDto,
     };
 
@@ -46,7 +44,7 @@ export class RelationshipService {
       (relationship) => relationship.id === id,
     );
     if (index === -1) {
-      throw new NotFoundException(`Relationship ${id} not found`);
+      throw new NotFoundException('Relationship not found');
     }
 
     return this.relationships.splice(index, 1)[0];
@@ -55,9 +53,13 @@ export class RelationshipService {
   private findById(id: number) {
     const relationship = this.relationships.find((item) => item.id === id);
     if (!relationship) {
-      throw new NotFoundException(`Relationship ${id} not found`);
+      throw new NotFoundException('Relationship not found');
     }
 
     return relationship;
+  }
+
+  private getNextId() {
+    return Math.max(...this.relationships.map((item) => item.id), 0) + 1;
   }
 }
